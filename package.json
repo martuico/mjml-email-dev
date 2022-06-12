@@ -1,0 +1,30 @@
+{
+  "name": "mjml-email-dev",
+  "version": "1.0.0",
+  "description": "Email development for CNT",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "mjml",
+    "gulp",
+    "nunjucks",
+    "browsersync"
+  ],
+  "author": "Mar Tuico",
+  "license": "ISC",
+  "dependencies": {
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "browser-sync": "^2.27.10",
+    "fs": "^0.0.1-security",
+    "gulp": "^4.0.2",
+    "gulp-data": "^1.3.1",
+    "gulp-mjml": "^4.0.2",
+    "gulp-nunjucks-render": "^2.2.3",
+    "js-yaml": "^4.1.0",
+    "mjml": "^4.12.0",
+    "rimraf": "^3.0.2"
+  }
+}
