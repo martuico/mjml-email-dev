@@ -4,6 +4,10 @@
   "description": "Email development for CNT",
   "main": "gulpfile.js",
   "scripts": {
+    "build": "gulp build",
+    "start": "gulp",
+    "serve": "gulp server",
+    "init-component": "mjml --init-component",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -16,7 +20,6 @@
   "license": "ISC",
   "dependencies": {
     "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
     "browser-sync": "^2.27.10",
     "fs": "^0.0.1-security",
     "gulp": "^4.0.2",
@@ -26,5 +29,22 @@
     "js-yaml": "^4.1.0",
     "mjml": "^4.12.0",
     "rimraf": "^3.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.5",
+    "@babel/plugin-proposal-class-properties": "^7.17.12",
+    "@babel/preset-env": "^7.18.2",
+    "@babel/register": "^7.17.7",
+    "babel-eslint": "^10.1.0",
+    "babel-register": "^6.26.0",
+    "eslint": "^8.18.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "fancy-log": "^2.0.0",
+    "gulp-babel": "^8.0.0"
+  },
+  "resolutions": {
+    "babel-core": "7.0.0-bridge.0"
   }
 }

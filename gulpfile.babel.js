@@ -4,14 +4,18 @@ import yaml from "js-yaml";
 import browser from "browser-sync";
 import rimraf from "rimraf";
 import fs from "fs";
+import log from "fancy-log";
+import path from "path";
 import gulp from "gulp";
+import babel from "gulp-babel";
 import mjmlGulp from "gulp-mjml";
 import mjml from "mjml";
 import nunjucks from "gulp-nunjucks-render";
 import data from "gulp-data";
+import { registerComponent } from "mjml-core";
 
 const PATHS = {
-  src: "./src/{layouts,partials,templates}/**/*.mjml",
+  src: "./src/{layouts,partials,components/templates}/**/*.mjml",
   data: "./src/data/data.yml",
   layouts: "./src/layouts/",
   partials: "./src/partials/",
@@ -23,9 +27,46 @@ const PATHS = {
   dist: "./dist/html/",
 };
 
+const walkSync = (dir, filelist = []) => {
+  fs.readdirSync(dir).forEach((file) => {
+    filelist = fs.statSync(path.join(dir, file)).isDirectory()
+      ? walkSync(path.join(dir, file), filelist)
+      : filelist.concat(path.join(dir, file));
+  });
+  return filelist;
+};
+
+const watchedComponents = walkSync("./src/components");
+
+const compileComponent = () => {
+  return gulp
+    .src(path.normalize("./src/components/**/*.js"))
+    .pipe(
+      babel({
+        presets: ["@babel/preset-env"],
+      })
+    )
+    .on("error", log)
+    .pipe(gulp.dest("./src/lib"))
+    .on("end", () => {
+      watchedComponents.forEach((compPath) => {
+        const fullPath = path.join(
+          process.cwd(),
+          compPath.replace(/^components/, "lib")
+        );
+        delete require.cache[fullPath];
+        registerComponent(require(fullPath).default);
+      });
+    });
+};
+
 function load_data() {
   let yml = fs.readFileSync(PATHS.data, "utf8");
   return yaml.load(yml);
+}
+
+export function registerMjmlCustomComponet() {
+  gulp.task("build", compile);
 }
 
 export function clean(done) {
@@ -80,9 +121,15 @@ export function watch() {
     .on("all", gulp.series(buildTemplates, buildMjml, browser.reload));
   gulp
     .watch(PATHS.src)
-    .on("all", gulp.series(buildTemplates, buildMjml, browser.reload));
+    .on(
+      "all",
+      gulp.series(compileComponent, buildTemplates, buildMjml, browser.reload)
+    );
 }
 
-gulp.task("build", gulp.series(clean, buildTemplates, buildMjml));
+gulp.task(
+  "build",
+  gulp.series(clean, compileComponent, buildTemplates, buildMjml)
+);
 
 gulp.task("default", gulp.series("build", gulp.parallel(server, watch)));
